@@ -1,0 +1,122 @@
+import { View, Text , Image, StyleSheet, useWindowDimensions,TextInput} from 'react-native'
+import React, {useState} from 'react';
+import Logo from '../../../assets/logo.webp';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import CustomInput from '../../components/CustomInput';
+import CustomButton from '../../components/CustomButton/CustomButton';
+import { useNavigation } from '@react-navigation/native';
+
+const SignInScreen = () => {    
+
+  const  [login, setLogin] = useState('');
+  const  [password, setPassword] = useState('');
+
+  const {height} = useWindowDimensions();
+  const navigation = useNavigation();
+
+  
+  const setUserName = async (value) => {
+    try {
+      await AsyncStorage.setItem('user', value)
+    } catch(e) {
+      
+    }
+  }
+
+  const answerAPI = (response) => {
+    if(response.status === '200'){
+      setUserName(response.user);
+      navigation.navigate('HomeScreen');
+    }
+  }
+
+  const onAuth = () => {
+    const options = {
+      method: 'POST',
+      headers: new Headers({
+          'auth': 0,
+          'login': '7730052050',
+          'password' : 'oJZCE9',
+          'Content-Type': 'application/json'
+      }),
+    };
+  
+    fetch('http://mvitu.arki.mosreg.ru/api_mobile_rso/', options)
+      .then(response => response.json())
+      .then(response => answerAPI(response))
+      .catch(err => console.error(err));
+  }
+
+
+  const onSignInPressed = () => {
+    const answer = onAuth();      
+  }
+
+  return (
+    <View style={styles.root}>
+      <Image  source={Logo} style={[styles.logo, {height: height * 0.3}]} />
+      <Text style={styles.textLogo}>Руководители РСО</Text>
+      <CustomInput 
+            placeholder={'Логин'} 
+            value = '7730052050' 
+            setValue={setLogin}    
+            name="login" 
+      />
+      <View style={styles.container}>
+        <TextInput
+          style={styles.input}
+          onChangeText={setPassword}
+          value='oJZCE9'
+          placeholder="Пароль"
+          name="password"
+          secureTextEntry={true}
+        />
+      </View>
+        <CustomButton text="Войти" onPress={onSignInPressed}/>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+    root : {
+      flex: 1,
+      paddingVertical: '20%',
+      alignItems: 'center',
+      padding: 20,
+      backgroundColor: 'white',
+      height:'100%',
+
+    },
+    logo: {
+        width: '40%',
+        maxWidth: 300,
+        maxHeight: 200,
+        marginBottom: 30
+    },
+    textLogo: {
+        marginBottom: 20,
+        fontSize: 20,
+        fontWeight: 'bold',
+
+    },
+    textInfo: {
+      fontSize: 12,
+      marginBottom: 20,
+      color: '#6b6b6b'
+    },
+    container: {
+      backgroundColor : 'white',
+      width : '100%',
+      borderColor : '#e8e8e8',
+      borderWidth: 1,
+      borderRadius: 5,
+      paddingHorizontal: 10,
+      marginVertical: 5,
+    },
+    input : {
+        padding: 10
+    }
+  });
+
+export default SignInScreen
