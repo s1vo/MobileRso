@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ActivityIndicator} from 'react-native'
 import React,{useState}from 'react'
 import CustomButton from '../../components/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const InfoRsoScreen = () => {
 
@@ -27,6 +27,20 @@ const InfoRsoScreen = () => {
   const [isGvs, setIsGvs] = useState(null);
   const [isGs, setIsGs] = useState(null);
   const [isEs, setIsEs] = useState(null);
+
+  const [userLogin, setUserLogin] = useState(''); 
+
+  const getUserLogin = async () => {
+    try {
+        return await AsyncStorage.getItem('login')
+    } catch(e) {
+
+    }
+  }
+
+  getUserLogin().then(login =>  setUserLogin(login));
+ 
+
 
   const answerAPI = (response) => {
 
@@ -131,19 +145,19 @@ const InfoRsoScreen = () => {
     const options = {
       method: 'POST',
       headers: new Headers({
-          'login': '7730052050',
+          'login': userLogin,
           'get_info': 'rso',
           'Content-Type': 'application/json'
       }),
     };
-  
     fetch('http://mvitu.arki.mosreg.ru/api_mobile_rso/', options)
       .then(response => response.json())
       .then(response => answerAPI(response))
       .catch(err => console.error(err));
   }
 
-  //console.log(getInfoRso());
+
+
   if(onLoading){
     const answer = getInfoRso();
   }

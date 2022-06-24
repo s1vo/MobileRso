@@ -23,21 +23,31 @@ const SignInScreen = () => {
       
     }
   }
+  
+  const setUserLogin = async (value) => {
+    try {
+      await AsyncStorage.setItem('login', value)
+    } catch(e) {
+      
+    }
+  }
 
   const answerAPI = (response) => {
     if(response.status === '200'){
       setUserName(response.user);
+      setUserLogin(login);
       navigation.navigate('HomeScreen');
     }
   }
+
 
   const onAuth = () => {
     const options = {
       method: 'POST',
       headers: new Headers({
           'auth': 0,
-          'login': '7730052050',
-          'password' : 'oJZCE9',
+          'login': login,
+          'password' : password,
           'Content-Type': 'application/json'
       }),
     };
@@ -50,7 +60,8 @@ const SignInScreen = () => {
 
 
   const onSignInPressed = () => {
-    const answer = onAuth();      
+    const answer = onAuth();   
+
   }
 
   return (
@@ -59,15 +70,14 @@ const SignInScreen = () => {
       <Text style={styles.textLogo}>Руководители РСО</Text>
       <CustomInput 
             placeholder={'Логин'} 
-            value = '7730052050' 
-            setValue={setLogin}    
+            onChangeText={setLogin}
+            setValue={setLogin}  
             name="login" 
       />
       <View style={styles.container}>
         <TextInput
           style={styles.input}
           onChangeText={setPassword}
-          value='oJZCE9'
           placeholder="Пароль"
           name="password"
           secureTextEntry={true}

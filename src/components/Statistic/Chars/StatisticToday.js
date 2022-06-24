@@ -1,6 +1,6 @@
 import { View, Text , StyleSheet,Dimensions, ActivityIndicator} from 'react-native'
 import React, {useState} from 'react'
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PieChart} from 'react-native-chart-kit';
 
 const StatisticToday = () => {
@@ -10,6 +10,16 @@ const StatisticToday = () => {
     const [count_work,setWork] = useState(null);
     const [count_new,setNew] = useState(null);
     const [onLoading, setLoading] = useState(true);
+
+    const [userLogin, setUserLogin] = useState(''); 
+    const getUserLogin = async () => {
+        try {
+            return await AsyncStorage.getItem('login')
+        } catch(e) {
+
+        }
+    }
+    getUserLogin().then(login =>  setUserLogin(login));
 
     const answerAPI = (response) => {
         
@@ -27,7 +37,7 @@ const StatisticToday = () => {
         const options = {
           method: 'POST',
           headers: new Headers({
-              'login': '7730052050',
+              'login': userLogin,
               'get_statistic_rso_today': 1,
               'Content-Type': 'application/json'
           }),

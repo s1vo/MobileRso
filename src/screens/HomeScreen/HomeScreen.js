@@ -11,6 +11,7 @@ const HomeScreen = () => {
     const navigation = useNavigation();
     const [userName, setUserName] = useState(''); 
 
+
     const onExitPressed = () => {
         navigation.navigate('SignInScreen');
     }
@@ -22,6 +23,10 @@ const HomeScreen = () => {
         navigation.navigate('ServiceScreen');
     }
 
+    const onAllStaticScreen = () => {
+        navigation.navigate('InfoAllStaticScreen');
+    }
+
     const getUserName = async () => {
         try {
             return await AsyncStorage.getItem('user')
@@ -29,10 +34,8 @@ const HomeScreen = () => {
 
         }
     }
-
     getUserName().then(name =>  setUserName(name));
-
-
+    
     return(
         <NativeBaseProvider>    
             <View style={styles.root}>
@@ -44,9 +47,9 @@ const HomeScreen = () => {
                             <Text style={styles.itemMenu}> Сведения о РСО</Text>
                         </View>  
                     </TouchableOpacity>
-                    <TouchableOpacity style={{width:'100%'}}>  
+                    <TouchableOpacity style={{width:'100%'}} onPress={onAllStaticScreen}>  
                         <View style={styles.card}>
-                            <Text style={styles.itemMenu}> Сведения о просрочках </Text>
+                            <Text style={styles.itemMenu}> Сведения по заявкам </Text>
                         </View>  
                     </TouchableOpacity>
                     <TouchableOpacity style={{width:'100%'}} onPress={onGetInfoService}>  
@@ -61,22 +64,12 @@ const HomeScreen = () => {
                     </TouchableOpacity>
                     <TouchableOpacity style={{width:'100%'}}>  
                         <View style={styles.card}>
-                            <Text style={styles.itemMenu}> Получение подробных сведений</Text>
-                        </View>  
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{width:'100%'}}>  
-                        <View style={styles.card}>
-                            <Text style={styles.itemMenu}> Статистика заявок </Text>
-                        </View>  
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{width:'100%'}}>  
-                        <View style={styles.card}>
                             <Text style={styles.itemMenu}> Статистика на сейчас</Text>
                         </View>  
                     </TouchableOpacity>
                     <TouchableOpacity style={{width:'100%'}}>  
                         <View style={styles.card}>
-                            <Text style={styles.itemMenu}> История статусо заявки </Text>
+                            <Text style={styles.itemMenu}> История статусов заявки </Text>
                         </View>  
                     </TouchableOpacity>
                 </ScrollView>

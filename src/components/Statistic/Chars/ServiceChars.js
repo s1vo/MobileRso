@@ -4,6 +4,7 @@ import CustomButton from '../../CustomButton/CustomButton';
 import {useNavigation} from '@react-navigation/native';
 import {PieChart} from 'react-native-chart-kit';
 
+
 const ServiceChars = () => {
   
     const [onLoading, setLoading] = useState(true);
@@ -264,5 +265,4 @@ const styles = StyleSheet.create({
 
     }
 
-
-  });
+});
