@@ -22,14 +22,16 @@ const StatisticToday = () => {
     getUserLogin().then(login =>  setUserLogin(login));
 
     const answerAPI = (response) => {
-        
         if(response.status === '200'){
-            let dataAnswer = response.message;  
-            setExpired(Number(dataAnswer.count_expired));
-            setLess(Number(dataAnswer.count_less));
-            setWork(Number(dataAnswer.count_work));
-            setNew(Number(dataAnswer.count_new));
-            setLoading(!onLoading);
+            if(typeof(response) === 'object'){
+                let dataAnswer = response.message;  
+                setExpired(Number(dataAnswer.count_expired));
+                setLess(Number(dataAnswer.count_less));
+                setWork(Number(dataAnswer.count_work));
+                setNew(Number(dataAnswer.count_new));
+                setLoading(!onLoading);
+            }
+
         } 
     }
 
@@ -42,7 +44,7 @@ const StatisticToday = () => {
               'Content-Type': 'application/json'
           }),
         };
-      
+        
         fetch('http://mvitu.arki.mosreg.ru/api_mobile_rso/', options)
           .then(response => response.json())
           .then(response => answerAPI(response))
@@ -51,37 +53,47 @@ const StatisticToday = () => {
     if(onLoading){
         const answer = getStatic();
     }
+    let arrayStat = []; 
 
-    let arrayStat = [        
-        {
+    if(count_new){
+        arrayStat.push({
             name: 'Новые',
-            population: count_new,
+            population: 0,
             color: '#B4C6D0',
             legendFontColor: '#032A49',
             legendFontSize: 14,
-        },
-        {
+        })
+    } 
+
+    if(count_work){
+        arrayStat.push({
             name: 'В работе',
-            population: count_work,
+            population: 1,
             color: '#1B78AF',
             legendFontColor: 'black',
             legendFontSize: 14,
-        },
-        {
+        })
+    } 
+    if(count_less){
+        arrayStat.push({
             name: 'Менее 5 д.',
-            population: count_less,
+            population: 2,
             color: '#e8a93f',
             legendFontColor: 'black',
             legendFontSize: 14,
-        },
-        {
+        })
+    } 
+
+    if(count_expired){
+        arrayStat.push({
             name: 'Просрочка',
-            population: count_expired,
+            population: 3,
             color: '#F58E41',
             legendFontColor: 'black',
             legendFontSize: 13,
-        }
-    ]; 
+        })
+    } 
+
 
 
   return (

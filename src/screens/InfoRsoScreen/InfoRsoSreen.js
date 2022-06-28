@@ -3,9 +3,18 @@ import React,{useState}from 'react'
 import CustomButton from '../../components/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from "@react-native-community/netinfo";
+
+import Networking from '../../components/Networking/Networking';
 
 const InfoRsoScreen = () => {
 
+  const [onNetwork, setNetWork] = useState(false);
+  NetInfo.fetch().then(state => {
+      setNetWork(state.isConnected);
+  });
+
+  const [userName, setUserName] = useState(''); 
   const [onLoading, setLoading] = useState(true);
   const [adress, setAdress] = useState(null);
   const [raion, setRaion] = useState(null);
@@ -15,11 +24,8 @@ const InfoRsoScreen = () => {
   const [email, setEmail] = useState(null);
 
   const [fioRuk, setFioRuk] = useState(null);
-  const [fioRukTwo, setFioRukTwo] = useState(null);
-  const [fioRukThree, setFioRukThree] = useState(null);
   const [dolgRuk, setDolgRuk] = useState(null);
-  const [dolgRukTwo, setDolgRukTwo] = useState(null);
-  const [dolgRukThree, setDolgRukThree] = useState(null);
+
 
   const [isTs, setIsTs] = useState(null);
   const [isVo, setIsVo] = useState(null);
@@ -40,7 +46,14 @@ const InfoRsoScreen = () => {
 
   getUserLogin().then(login =>  setUserLogin(login));
  
+  const getUserName = async () => {
+    try {
+        return await AsyncStorage.getItem('user')
+    } catch(e) {
 
+    }
+}
+getUserName().then(name =>  setUserName(name));
 
   const answerAPI = (response) => {
 
@@ -82,31 +95,13 @@ const InfoRsoScreen = () => {
       }else{
         setFioRuk('Поле не заполнено');
       }
-      if(dataAnswer.fio_ruk2.length > 0){
-        setFioRukTwo(dataAnswer.fio_ruk);
-      }else{
-        setFioRukTwo('Поле не заполнено');
-      }
-      if(dataAnswer.fio_ruk3.length > 0){
-        setFioRukThree(dataAnswer.fio_ruk3);
-      }else{
-        setFioRukThree('Поле не заполнено');
-      }
+
       if(dataAnswer.dolgn_ruk.length > 0){
         setDolgRuk(dataAnswer.dolgn_ruk);
       }else{
         setDolgRuk('Поле не заполнено');
       }
-      if(dataAnswer.dolgn_ruk2.length > 0){
-        setDolgRukTwo(dataAnswer.dolgn_ruk2);
-      }else{
-        setDolgRukTwo('Поле не заполнено');
-      }
-      if(dataAnswer.dolgn_ruk3.length > 0){
-        setDolgRukThree(dataAnswer.dolgn_ruk3);
-      }else{
-        setDolgRukThree('Поле не заполнено');
-      }
+
       if(dataAnswer.is_ts = 1){
         setIsTs('Да');
       }else{
@@ -166,95 +161,95 @@ const InfoRsoScreen = () => {
   const backScreen =()=>  {
       navigation.navigate('HomeScreen');
   }
-
-  return (
-    <View style={styles.root}>
-      {
-        onLoading ? ( <ActivityIndicator size="large" color="#427ef5" style={{flex:1, justifyContent: 'center'}}/> ) : (
-          <><View style={styles.card}>
-            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 5, }}>ФГУП «ГК НПЦ им. М.В.Хруничева»</Text>
-            <View style={styles.cardHeader}>
-              <Text style={{ fontSize: 16, fontWeight: '600', color: 'white' }}> Контактная информация</Text>
+  if(onNetwork){
+    return (
+      <View style={styles.root}>
+        {
+          onLoading ? ( <ActivityIndicator size="large" color="#427ef5" style={{flex:1, justifyContent: 'center'}}/> ) : (
+            <><View style={styles.card}>
+              <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 10, }}>{userName}</Text>
+              <View style={styles.cardHeader}>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: 'white' }}> Контактная информация</Text>
+              </View>
+              <View style={styles.cardBody}>
+                <View style={{ flexDirection: 'column' }}>
+                  <Text style={styles.cardTextHeader}> Адрес: </Text>
+                  <Text style={styles.cardText}> {adress} </Text>
+                </View>
+                <View style={{ flexDirection: 'column' }}>
+                  <Text style={styles.cardTextHeader}> Район: </Text>
+                  <Text style={styles.cardText}>{raion}</Text>
+                </View>
+                <View style={{ flexDirection: 'column' }}>
+                  <Text style={styles.cardTextHeader}> Кадастровый номер №1: </Text>
+                  <Text style={styles.cardText}>{kadNum}</Text>
+                </View>
+                <View style={{ flexDirection: 'column' }}>
+                  <Text style={styles.cardTextHeader}> Кадастровый номер №2: </Text>
+                  <Text style={styles.cardText}>{kadNumTwo}</Text>
+                </View>
+                <View style={{ flexDirection: 'column' }}>
+                  <Text style={styles.cardTextHeader}> Телефон: </Text>
+                  <Text style={styles.cardText}>{phone}</Text>
+                </View>
+                <View style={{ flexDirection: 'column' }}>
+                  <Text style={styles.cardTextHeader}> Почта: </Text>
+                  <Text style={styles.cardText}>{email}</Text>
+                </View>
+                <View style={{ flexDirection: 'column' }}>
+                  <Text style={styles.cardTextHeader}>{dolgRuk}</Text>
+                  <Text style={styles.cardText}>{fioRuk}</Text>
+                </View>
+              </View>
+  
+              <View style={styles.cardHeader}>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: 'white' }}>Возможность выдачи ресурсов</Text>
+              </View>
+              <View style={styles.cardBody}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={styles.cardTextHeader}>Возможность выдача ТС: </Text>
+                  <Text style={{ fontSize: 16, fontWeight: '700', marginRight: '20%' }}>{isTs}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={styles.cardTextHeader}>Возможность выдача ВС: </Text>
+                  <Text style={{ fontSize: 16, fontWeight: '700', marginRight: '20%' }}>{isHvs}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={styles.cardTextHeader}>Возможность выдача ГВС: </Text>
+                  <Text style={{ fontSize: 16, fontWeight: '700', marginRight: '20%' }}>{isGvs}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={styles.cardTextHeader}>Возможность выдача ВО: </Text>
+                  <Text style={{ fontSize: 16, fontWeight: '700', marginRight: '20%' }}>{isVo}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={styles.cardTextHeader}>Возможность выдача ЕС: </Text>
+                  <Text style={{ fontSize: 16, fontWeight: '700', marginRight: '20%' }}>{isEs}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={styles.cardTextHeader}>Возможность выдача ГС: </Text>
+                  <Text style={{ fontSize: 16, fontWeight: '700', marginRight: '20%' }}>{isGs}</Text>
+                </View>
+              </View>
+  
+  
             </View>
-            <View style={styles.cardBody}>
-              <View style={{ flexDirection: 'column' }}>
-                <Text style={styles.cardTextHeader}> Адрес: </Text>
-                <Text style={styles.cardText}> {adress} </Text>
+              <View style={styles.footer}>
+                <CustomButton text="Назад" onPress={backScreen} />
               </View>
-              <View style={{ flexDirection: 'column' }}>
-                <Text style={styles.cardTextHeader}> Район: </Text>
-                <Text style={styles.cardText}>{raion}</Text>
-              </View>
-              <View style={{ flexDirection: 'column' }}>
-                <Text style={styles.cardTextHeader}> Кадастровый номер №1: </Text>
-                <Text style={styles.cardText}>{kadNum}</Text>
-              </View>
-              <View style={{ flexDirection: 'column' }}>
-                <Text style={styles.cardTextHeader}> Кадастровый номер №2: </Text>
-                <Text style={styles.cardText}>{kadNumTwo}</Text>
-              </View>
-              <View style={{ flexDirection: 'column' }}>
-                <Text style={styles.cardTextHeader}> Телефон: </Text>
-                <Text style={styles.cardText}>{phone}</Text>
-              </View>
-              <View style={{ flexDirection: 'column' }}>
-                <Text style={styles.cardTextHeader}> Почта: </Text>
-                <Text style={styles.cardText}>{email}</Text>
-              </View>
-              <View style={{ flexDirection: 'column' }}>
-                <Text style={styles.cardTextHeader}>{dolgRuk}</Text>
-                <Text style={styles.cardText}>{fioRuk}</Text>
-              </View>
-              <View style={{ flexDirection: 'column' }}>
-                <Text style={styles.cardTextHeader}>{dolgRukTwo}</Text>
-                <Text style={styles.cardText}>{fioRukTwo}</Text>
-              </View>
-              <View style={{ flexDirection: 'column' }}>
-                <Text style={styles.cardTextHeader}>{dolgRukThree}</Text>
-                <Text style={styles.cardText}>{fioRukThree}</Text>
-              </View>
-            </View>
+            </>
+          )
+        }
+  
+  
+      </View>
+    )
+  }else{
+    return (
+      <Networking></Networking>
+    )
+  }
 
-            <View style={styles.cardHeader}>
-              <Text style={{ fontSize: 16, fontWeight: '600', color: 'white' }}>Возможность выдачи ресурсов</Text>
-            </View>
-            <View style={styles.cardBody}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={styles.cardTextHeader}>Возможность выдача ТС: </Text>
-                <Text style={{ fontSize: 16, fontWeight: '700', marginRight: '20%' }}>{isTs}</Text>
-              </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={styles.cardTextHeader}>Возможность выдача ВС: </Text>
-                <Text style={{ fontSize: 16, fontWeight: '700', marginRight: '20%' }}>{isHvs}</Text>
-              </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={styles.cardTextHeader}>Возможность выдача ГВС: </Text>
-                <Text style={{ fontSize: 16, fontWeight: '700', marginRight: '20%' }}>{isGvs}</Text>
-              </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={styles.cardTextHeader}>Возможность выдача ВО: </Text>
-                <Text style={{ fontSize: 16, fontWeight: '700', marginRight: '20%' }}>{isVo}</Text>
-              </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={styles.cardTextHeader}>Возможность выдача ЕС: </Text>
-                <Text style={{ fontSize: 16, fontWeight: '700', marginRight: '20%' }}>{isEs}</Text>
-              </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={styles.cardTextHeader}>Возможность выдача ГС: </Text>
-                <Text style={{ fontSize: 16, fontWeight: '700', marginRight: '20%' }}>{isGs}</Text>
-              </View>
-            </View>
-
-
-          </View><View style={styles.footer}>
-              <CustomButton text="Назад" onPress={backScreen} />
-            </View></>
-        )
-      }
-
-
-    </View>
-  )
 }
 
 export default InfoRsoScreen
@@ -265,6 +260,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 20,
     backgroundColor: 'white',  
+    paddingTop: Platform.OS === 'android' ? 40 : 0,
+    height:'100%'
   },
   cardHeader: {
     alignItems:'center',
@@ -287,4 +284,5 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 5
   },
+
 });

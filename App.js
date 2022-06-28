@@ -1,9 +1,6 @@
-import React, {useState} from 'react';
-import { StyleSheet,SafeAreaView } from 'react-native';
+import React,{useState} from 'react';
+import { StyleSheet,SafeAreaView} from 'react-native';
 import Navigation from './src/navigation';
-import { NativeBaseProvider} from "native-base";
-import * as Font from 'expo-font';
-
 
 
 export default function App() {

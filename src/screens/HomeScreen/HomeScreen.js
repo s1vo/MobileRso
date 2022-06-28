@@ -1,16 +1,22 @@
-import { View, Text ,StyleSheet, Image, FlatList, TouchableOpacity, ScrollView} from 'react-native'
+import { View, Text ,StyleSheet, TouchableOpacity, ScrollView, Image,useWindowDimensions} from 'react-native'
 import React, {useState} from 'react'
 import { useNavigation } from '@react-navigation/native';
 import Statistic from '../../components/Statistic/Statistic';
 import { NativeBaseProvider } from "native-base";
 import CustomButton from '../../components/CustomButton/CustomButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from "@react-native-community/netinfo";
+
+import Networking from '../../components/Networking/Networking';
 
 const HomeScreen = () => {
-    
+
     const navigation = useNavigation();
     const [userName, setUserName] = useState(''); 
-
+    const [onNetwork, setNetWork] = useState(false);
+    NetInfo.fetch().then(state => {
+        setNetWork(state.isConnected);
+    });
 
     const onExitPressed = () => {
         navigation.navigate('SignInScreen');
@@ -26,6 +32,9 @@ const HomeScreen = () => {
     const onAllStaticScreen = () => {
         navigation.navigate('InfoAllStaticScreen');
     }
+    const InfoObjectScreen = () =>{
+        navigation.navigate('InfoObjectScreen');
+    }
 
     const getUserName = async () => {
         try {
@@ -35,52 +44,55 @@ const HomeScreen = () => {
         }
     }
     getUserName().then(name =>  setUserName(name));
-    
-    return(
-        <NativeBaseProvider>    
-            <View style={styles.root}>
-                <Text style={styles.header}> {userName} </Text>
-                <Statistic />
-                <ScrollView style={styles.wrapper}>
-                    <TouchableOpacity style={{width:'100%'}} onPress={onGetInfoRso}>
-                        <View style={styles.card}>
-                            <Text style={styles.itemMenu}> Сведения о РСО</Text>
-                        </View>  
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{width:'100%'}} onPress={onAllStaticScreen}>  
-                        <View style={styles.card}>
-                            <Text style={styles.itemMenu}> Сведения по заявкам </Text>
-                        </View>  
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{width:'100%'}} onPress={onGetInfoService}>  
-                        <View style={styles.card}>
-                            <Text style={styles.itemMenu}> Сведения по услугам </Text>
-                        </View>  
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{width:'100%'}}>  
-                        <View style={styles.card}>
-                            <Text style={styles.itemMenu}> Сведения по статусам </Text>
-                        </View>  
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{width:'100%'}}>  
-                        <View style={styles.card}>
-                            <Text style={styles.itemMenu}> Статистика на сейчас</Text>
-                        </View>  
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{width:'100%'}}>  
-                        <View style={styles.card}>
-                            <Text style={styles.itemMenu}> История статусов заявки </Text>
-                        </View>  
-                    </TouchableOpacity>
-                </ScrollView>
-                <View style={styles.footer}>
-                    <CustomButton text="Выйти"  onPress={onExitPressed}/>
-                </View>
-            </View>
-        </NativeBaseProvider>
 
-        
-    )
+    if(onNetwork){
+        return(
+            <NativeBaseProvider>    
+                <View style={styles.root}>
+                    <Text style={styles.header}> {userName} </Text>
+                    <Statistic />
+                    <ScrollView style={styles.wrapper}>
+                        <TouchableOpacity style={{width:'100%'}} onPress={onGetInfoRso}>
+                            <View style={styles.card}>
+                                <Text style={styles.itemMenu}> Сведения о РСО</Text>
+                            </View>  
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{width:'100%'}} onPress={onAllStaticScreen}>  
+                            <View style={styles.card}>
+                                <Text style={styles.itemMenu}> Сведения по заявкам </Text>
+                            </View>  
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{width:'100%'}} onPress={onGetInfoService}>  
+                            <View style={styles.card}>
+                                <Text style={styles.itemMenu}> Сведения по услугам </Text>
+                            </View>  
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{width:'100%'}} onPress={InfoObjectScreen} >  
+                            <View style={styles.card}>
+                                <Text style={styles.itemMenu}> Сведения о заявке </Text>
+                            </View>  
+                        </TouchableOpacity>
+                        {/* <TouchableOpacity style={{width:'100%'}}>  
+                            <View style={styles.card}>
+                                <Text style={styles.itemMenu}> История статусов заявке </Text>
+                            </View>  
+                        </TouchableOpacity> */}
+                    </ScrollView>
+                
+                    <View style={styles.footer}>
+                        <CustomButton text="Выйти"  onPress={onExitPressed}/>
+                    </View>
+                </View>
+            </NativeBaseProvider>
+    
+            
+        )
+    }else{
+        return(
+            <Networking/>
+        )
+    }
+
 }
 
 export default HomeScreen; 
@@ -90,7 +102,8 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-start',
         padding: 20,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        paddingTop: Platform.OS === 'android' ? 40 : 0
     },
     header:{ 
         fontSize: 17,
@@ -116,6 +129,12 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         borderRadius: 5,
         padding: 10,
-    }
+    },
+    logo: {
+        width: '50%',
+        maxWidth: 300,
+        maxHeight: 200,
+        marginBottom: 30
+    },
 
 });
