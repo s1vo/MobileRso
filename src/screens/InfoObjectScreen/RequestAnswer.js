@@ -11,7 +11,7 @@ const RequestAnswer = (props) =>  {
     const [apiJson, setApiJson] = useState('');
     const [userLogin, setUserLogin] = useState(''); 
     const [errorText, setErrorText] = useState('');
-
+    const [errorStatus, setErrorStatus] = useState(false);
 
     const getUserLogin = async () => {
         try {
@@ -24,19 +24,25 @@ const RequestAnswer = (props) =>  {
     getUserLogin().then(login =>  setUserLogin(login));
 
     const answerAPI =  async(response) => {
-        if(response.status === '200'){     
+  
+        if(response.status === '400'){ 
+            setErrorStatus(true);
+            setErrorText(response.message);
+        }else if(response.status === '402'){
+            setErrorStatus(true);
+            setErrorText(response.message);
+        }
+        
+        if(response.status === '200'){  
+          
             if(typeof(response) === 'object'){
                 let objectAPI = response.message;
                 setApiJson(objectAPI); 
-                setLoading(!onLoading);   
-            }
-            
-        }   
-        else if(response.status === '400'){ 
-            //setLoading(false);
-            //setErrorText(response.message);
-        }
-        
+                
+                setLoading(!onLoading);  
+                setErrorStatus(false);   
+            }    
+        } 
     }    
 
     const getRequest = () => {
@@ -70,7 +76,6 @@ const RequestAnswer = (props) =>  {
         getRequest();
     }
 
-
     const sizeRequest = Object.size(apiJson);
     let [pageItems, setPageItems] = useState(1);
 
@@ -81,32 +86,37 @@ const RequestAnswer = (props) =>  {
        items +=1;
        setPageItems(items);
     }
-  
-    return (
-        <View style={{marginHorizontal:'5%', marginTop:10,}}>
-            { !customClaimNumber ? <Text style={{fontSize:18,fontWeight:'600', marginVertical: '2%'}}> Введите номер заявке для поиска </Text> : (
-                <ScrollView>
-                { errorText ? <Text style={{marginVertical: 5, fontSize: 16, color:"red"}}>{errorText}</Text> : <Text></Text>}
-                { onLoading ? 
-                    (<ActivityIndicator size="large" color="#427ef5" style={{flex:1, justifyContent: 'center', height:'100%'}}/>)
-                    :
-                    (<>
-                        <Text style={{marginBottom: 10, fontSize: 16, fontWeight: '600'}}> Найдено заявок : {sizeRequest} </Text>
-                        <CardRequest data={arrayApiJson} index={pageItems}/>
-                        {(pageItems !== sizeRequest)? 
-                            (<>
-                                <Text  style={{marginBottom: 10, fontSize: 16, fontWeight: '600'}}>Загружено {pageItems} из {sizeRequest}</Text>
-                                <CustomButton text="Загрузить еще" onPress={loadNextPage} /> 
-                            </>)
-                        :<Text></Text>}
-                    </>) 
-                }
-                </ScrollView>
-            )}
+    if(!errorStatus){
+        return (
+            <View style={{marginHorizontal:'5%', marginTop:10,}}>
+                { !customClaimNumber ? <Text style={{fontSize:18,fontWeight:'600', marginVertical: '2%'}}> Введите номер заявке для поиска </Text> : (
+                    <ScrollView>
+                    { onLoading ? 
+                        (<ActivityIndicator size="large" color="#427ef5" style={{flex:1, justifyContent: 'center', height:'100%'}}/>)
+                        :
+                        (<>
+                            <Text style={{marginBottom: 10, fontSize: 16, fontWeight: '600'}}> Найдено заявок : {sizeRequest} </Text>
+                            <CardRequest data={arrayApiJson} index={pageItems}/>
+                            {(pageItems !== sizeRequest)? 
+                                (<>
+                                    <Text  style={{marginBottom: 10, fontSize: 16, fontWeight: '600'}}>Загружено {pageItems} из {sizeRequest}</Text>
+                                    <CustomButton text="Загрузить еще" onPress={loadNextPage} /> 
+                                </>)
+                            :<Text></Text>}
+                        </>) 
+                    }
+                    </ScrollView>
+                )}
+            </View>
+        )
+    }else{
+        return(
+            <View style={{marginHorizontal:'5%', marginTop:10,}}>
+                <Text style={{fontSize: 20, fontWeight:'600', color:'red'}}>{errorText}</Text>
+            </View>
+        )
+    }
 
-        
-        </View>
-    )
 }
 
 export default RequestAnswer;

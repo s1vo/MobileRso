@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
   },
   input : {
     padding: 10,
+    width:'77%'
   },
   divInput:{
     flexDirection: 'row',
@@ -94,6 +95,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     marginHorizontal: '5%',
+    marginTop: '5%'
    
   }
 

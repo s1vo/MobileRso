@@ -71,7 +71,6 @@ const styles = StyleSheet.create({
   footer:{
     marginTop: 10,
     marginHorizontal: '5%',
-    backgroundColor:'white'
   }
 
 
